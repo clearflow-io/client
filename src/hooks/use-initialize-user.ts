@@ -8,30 +8,39 @@ export function useInitializeUser() {
   const [lastSyncedUserId, setLastSyncedUserId] = useState<string | null>(null);
 
   useEffect(() => {
-    if (isLoaded && isSignedIn && user && user.id !== lastSyncedUserId) {
-      setLastSyncedUserId(user.id);
-
+    if (isLoaded && isSignedIn && user && user.id !== lastSyncedUserId && !isSyncing) {
       const email = user.primaryEmailAddress?.emailAddress;
       if (!email) {
         console.error('User has no primary email address');
         return;
       }
 
-      syncUser({
-        clerk_id: user.id,
-        email: email,
-        first_name: user.firstName,
-        last_name: user.lastName,
-        image_url: user.imageUrl,
-      });
+      syncUser(
+        {
+          clerk_id: user.id,
+          email: email,
+          first_name: user.firstName,
+          last_name: user.lastName,
+          image_url: user.imageUrl,
+        },
+        { onSuccess: () => setLastSyncedUserId(user.id) },
+      );
     }
-  }, [isLoaded, isSignedIn, user, lastSyncedUserId, syncUser]);
+  }, [isLoaded, isSignedIn, user, lastSyncedUserId, syncUser, isSyncing]);
 
-  // We are "loaded" if:
-  // 1. Clerk is loaded AND
-  // 2. Either the user is not signed in OR the user is signed in and the sync has completed
-  const isActuallyLoaded =
-    isLoaded && (!isSignedIn || (lastSyncedUserId === user?.id && !isSyncing));
+  const isActuallyLoaded = (() => {
+    // 1. If Clerk itself isn't loaded, we're definitely not ready
+    if (!isLoaded) return false;
+
+    // 2. If the user isn't signed in, no synchronization is needed
+    // The app can load the unauthenticated state.
+    if (!isSignedIn) return true;
+
+    // 3. If signed in, we are loaded only when:
+    //    - The last synced ID matches the current user AND
+    //    - There isn't a sync currently in progress
+    return lastSyncedUserId === user.id && !isSyncing;
+  })();
 
   return {
     isLoaded: isActuallyLoaded,
