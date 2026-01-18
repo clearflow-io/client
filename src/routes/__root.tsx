@@ -41,9 +41,9 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 });
 
 function AuthInitializer({ children }: { children: React.ReactNode }) {
-  const { isLoaded, hasError, retry, isSyncing } = useInitializeUser();
+  const { isReady, syncError, retry, isSyncing } = useInitializeUser();
 
-  if (!isLoaded) {
+  if (!isReady) {
     return (
       <div className="flex h-screen w-screen items-center justify-center">
         <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
@@ -51,7 +51,7 @@ function AuthInitializer({ children }: { children: React.ReactNode }) {
     );
   }
 
-  if (hasError) {
+  if (syncError) {
     return (
       <div className="flex h-screen w-screen items-center justify-center">
         <div className="flex max-w-md flex-col items-center gap-4 rounded-lg border border-destructive/50 bg-destructive/10 p-6 text-center">

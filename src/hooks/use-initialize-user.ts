@@ -3,76 +3,84 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { toast } from 'sonner';
 import { useSyncUser } from './queries/users';
 
+/**
+ * Synchronizes the Clerk user with our backend on sign-in.
+ * Returns `isReady: true` when the app can render (either user is synced, not signed in, or sync failed).
+ */
 export function useInitializeUser() {
   const { isLoaded, isSignedIn, user } = useUser();
   const { signOut } = useClerk();
-  const { mutate: syncUser, isPending: isSyncing, isSuccess: isSynced } = useSyncUser();
-  const [lastSyncedUserId, setLastSyncedUserId] = useState<string | null>(null);
-  const [hasError, setHasError] = useState(false);
+  const { mutate: syncUser, isPending: isSyncing } = useSyncUser();
+  const [syncedUserId, setSyncedUserId] = useState<string | null>(null);
+  const [syncError, setSyncError] = useState(false);
 
+  // Sync user with backend when signed in
   useEffect(() => {
-    if (isLoaded && isSignedIn && user && user.id !== lastSyncedUserId && !isSyncing) {
-      // Reset error state when attempting sync for a new/different user
-      if (hasError) {
-        setHasError(false);
-      }
+    const shouldSync =
+      isLoaded && isSignedIn && user && user.id !== syncedUserId && !isSyncing && !syncError;
 
-      const email = user.primaryEmailAddress?.emailAddress;
-      if (!email) {
-        console.error('User has no primary email address');
-        toast.error('Account error: No email address found. Please sign in with a valid email.');
-        signOut();
-        return;
-      }
+    if (!shouldSync) return;
 
-      syncUser(
-        {
-          clerk_id: user.id,
-          email: email,
-          first_name: user.firstName,
-          last_name: user.lastName,
-          image_url: user.imageUrl,
-        },
-        {
-          onSuccess: () => setLastSyncedUserId(user.id),
-          onError: (error) => {
-            console.error('Failed to sync user:', error);
-            toast.error('Failed to initialize your account. Please try again later.');
-            setHasError(true);
-          },
-        },
-      );
+    const email = user.primaryEmailAddress?.emailAddress;
+    if (!email) {
+      console.error('User has no primary email address');
+      toast.error('Account error: No email address found. Please sign in with a valid email.');
+      signOut();
+      return;
     }
-  }, [isLoaded, isSignedIn, user, lastSyncedUserId, syncUser, isSyncing, hasError, signOut]);
+
+    syncUser(
+      {
+        clerkId: user.id,
+        email,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        imageUrl: user.imageUrl,
+      },
+      {
+        onSuccess: () => setSyncedUserId(user.id),
+        onError: (error) => {
+          console.error('Failed to sync user:', error);
+          toast.error('Failed to initialize your account. Please try again.');
+          setSyncError(true);
+        },
+      },
+    );
+  }, [isLoaded, isSignedIn, user, syncedUserId, syncUser, isSyncing, syncError, signOut]);
+
+  // Reset error state when user changes (e.g., different account signs in)
+  useEffect(() => {
+    if (user?.id && syncedUserId && user.id !== syncedUserId) {
+      setSyncError(false);
+    }
+  }, [user?.id, syncedUserId]);
 
   const retry = useCallback(() => {
-    setHasError(false);
-    setLastSyncedUserId(null);
+    setSyncError(false);
+    setSyncedUserId(null);
   }, []);
 
-  const isActuallyLoaded = useMemo(() => {
-    // 1. If Clerk itself isn't loaded, we're definitely not ready
+  const isReady = useMemo(() => {
+    // - Clerk is still loading: not ready
     if (!isLoaded) return false;
 
-    // 2. If the user isn't signed in, no synchronization is needed
-    // The app can load the unauthenticated state.
+    // - User not signed in: ready (no sync needed)
     if (!isSignedIn) return true;
 
-    // 3. If there was an error during sync, we're loaded (to show the error state)
-    if (hasError) return true;
+    // - User signed in and synced: ready
+    if (syncedUserId === user.id) return true;
 
-    // 4. If signed in, we are loaded only when:
-    //    - The last synced ID matches the current user AND
-    //    - There isn't a sync currently in progress
-    return lastSyncedUserId === user.id && !isSyncing;
-  }, [isLoaded, isSignedIn, hasError, lastSyncedUserId, user?.id, isSyncing]);
+    // - Sync error: ready (show error UI)
+    if (syncError) return true;
+
+    return false;
+  }, [isLoaded, isSignedIn, syncError, syncedUserId, user?.id]);
 
   return {
-    isLoaded: isActuallyLoaded,
+    isReady,
     isSignedIn,
     isSyncing,
-    isSynced,
-    hasError,
+    syncError,
     retry,
   };
 }
