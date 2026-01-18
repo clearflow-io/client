@@ -1,0 +1,23 @@
+# Dependencies
+node_modules
+
+# Build artifacts
+dist
+dist-ssr
+.nitro
+.output
+
+# Environment files
+.env
+*.local
+
+# TanStack Start/Vite specific
+.tanstack
+.vinxi
+routeTree.gen.ts # Optional: some developers commit this file
+
+# Misc
+.DS_Store
+.vscode
+count.txt
+todos.json
