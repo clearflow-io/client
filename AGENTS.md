@@ -20,6 +20,7 @@ This document outlines the architectural principles, coding standards, and best 
     - Use `router.invalidate()` on the client to refresh the route tree after a server-side mutation.
 - **API Handlers**: For traditional REST-like endpoints, use the `server.handlers` property inside `createFileRoute`. This allows defining `GET`, `POST`, etc., directly in the route file.
 - **Backend Decoupling**: Since the main backend is separate, all external API calls must go through a dedicated `src/lib/api-client.ts`.
+- **camelCase for API Payloads**: All request/response payloads to the backend API MUST use camelCase property names (e.g., `firstName`, `clerkId`). Never use snake_case in API interfaces or request bodies.
 
 ### 3. Component Architecture & Authentication
 - **ShadCN UI**: All primitive components reside in `src/components/ui`. Do not modify these directly unless global design changes are required.
