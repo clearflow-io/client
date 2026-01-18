@@ -5,11 +5,11 @@ import { useSyncUser } from './queries/users';
 export function useInitializeUser() {
   const { isLoaded, isSignedIn, user } = useUser();
   const { mutate: syncUser, isPending: isSyncing, isSuccess: isSynced } = useSyncUser();
-  const [isSyncStarted, setIsSyncStarted] = useState(false);
+  const [lastSyncedUserId, setLastSyncedUserId] = useState<string | null>(null);
 
   useEffect(() => {
-    if (isLoaded && isSignedIn && user && !isSyncStarted) {
-      setIsSyncStarted(true);
+    if (isLoaded && isSignedIn && user && user.id !== lastSyncedUserId) {
+      setLastSyncedUserId(user.id);
 
       const email = user.primaryEmailAddress?.emailAddress;
       if (!email) {
@@ -25,12 +25,13 @@ export function useInitializeUser() {
         image_url: user.imageUrl,
       });
     }
-  }, [isLoaded, isSignedIn, user, isSyncStarted, syncUser]);
+  }, [isLoaded, isSignedIn, user, lastSyncedUserId, syncUser]);
 
   // We are "loaded" if:
   // 1. Clerk is loaded AND
   // 2. Either the user is not signed in OR the user is signed in and the sync has completed
-  const isActuallyLoaded = isLoaded && (!isSignedIn || (isSyncStarted && !isSyncing));
+  const isActuallyLoaded =
+    isLoaded && (!isSignedIn || (lastSyncedUserId === user?.id && !isSyncing));
 
   return {
     isLoaded: isActuallyLoaded,

@@ -25,7 +25,7 @@ export const userKeys = {
 };
 
 export function useUsers() {
-  const { getToken } = useAuth();
+  const { getToken, isSignedIn } = useAuth();
 
   return useQuery({
     queryKey: userKeys.list(),
@@ -33,6 +33,7 @@ export function useUsers() {
       const token = await getToken();
       return apiClient<User[]>('/api/v1/users', { token: token || undefined });
     },
+    enabled: Boolean(isSignedIn),
   });
 }
 

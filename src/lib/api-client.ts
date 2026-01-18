@@ -13,7 +13,7 @@ export async function apiClient<T>(
     token?: string;
     [key: string]: unknown;
   } = {},
-): Promise<T> {
+): Promise<T | null> {
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
   };
@@ -28,7 +28,7 @@ export async function apiClient<T>(
     ...customConfig,
   };
 
-  if (body) {
+  if (body !== undefined) {
     config.body = JSON.stringify(body);
   }
 
@@ -43,5 +43,14 @@ export async function apiClient<T>(
     throw new Error(errorData.message || `API request failed with status ${response.status}`);
   }
 
-  return response.json();
+  if (response.status === 204) {
+    return null;
+  }
+
+  const text = await response.text();
+  if (!text) {
+    return null;
+  }
+
+  return JSON.parse(text);
 }
