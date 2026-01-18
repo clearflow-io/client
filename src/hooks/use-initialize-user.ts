@@ -1,5 +1,5 @@
 import { useClerk, useUser } from '@clerk/clerk-react';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { toast } from 'sonner';
 import { useSyncUser } from './queries/users';
 
@@ -11,7 +11,12 @@ export function useInitializeUser() {
   const [hasError, setHasError] = useState(false);
 
   useEffect(() => {
-    if (isLoaded && isSignedIn && user && user.id !== lastSyncedUserId && !isSyncing && !hasError) {
+    if (isLoaded && isSignedIn && user && user.id !== lastSyncedUserId && !isSyncing) {
+      // Reset error state when attempting sync for a new/different user
+      if (hasError) {
+        setHasError(false);
+      }
+
       const email = user.primaryEmailAddress?.emailAddress;
       if (!email) {
         console.error('User has no primary email address');
@@ -40,7 +45,12 @@ export function useInitializeUser() {
     }
   }, [isLoaded, isSignedIn, user, lastSyncedUserId, syncUser, isSyncing, hasError, signOut]);
 
-  const isActuallyLoaded = (() => {
+  const retry = useCallback(() => {
+    setHasError(false);
+    setLastSyncedUserId(null);
+  }, []);
+
+  const isActuallyLoaded = useMemo(() => {
     // 1. If Clerk itself isn't loaded, we're definitely not ready
     if (!isLoaded) return false;
 
@@ -55,7 +65,7 @@ export function useInitializeUser() {
     //    - The last synced ID matches the current user AND
     //    - There isn't a sync currently in progress
     return lastSyncedUserId === user.id && !isSyncing;
-  })();
+  }, [isLoaded, isSignedIn, hasError, lastSyncedUserId, user?.id, isSyncing]);
 
   return {
     isLoaded: isActuallyLoaded,
@@ -63,5 +73,6 @@ export function useInitializeUser() {
     isSyncing,
     isSynced,
     hasError,
+    retry,
   };
 }
