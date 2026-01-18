@@ -12,7 +12,10 @@ export function useInitializeUser() {
   const { signOut } = useClerk();
   const { mutate: syncUser, isPending: isSyncing } = useSyncUser();
   const [syncedUserId, setSyncedUserId] = useState<string | null>(null);
-  const [syncError, setSyncError] = useState(false);
+  const [errorUserId, setErrorUserId] = useState<string | null>(null);
+
+  // Derive syncError from errorUserId - error is only relevant for the current user
+  const syncError = errorUserId !== null && errorUserId === user?.id;
 
   // Sync user with backend when signed in
   useEffect(() => {
@@ -42,22 +45,15 @@ export function useInitializeUser() {
         onError: (error) => {
           console.error('Failed to sync user:', error);
           toast.error('Failed to initialize your account. Please try again.');
-          setSyncError(true);
+          setErrorUserId(user.id);
         },
       },
     );
   }, [isLoaded, isSignedIn, user, syncedUserId, syncUser, isSyncing, syncError, signOut]);
 
-  // Reset error state when user changes (e.g., different account signs in)
-  useEffect(() => {
-    if (user?.id && syncedUserId && user.id !== syncedUserId) {
-      setSyncError(false);
-    }
-  }, [user?.id, syncedUserId]);
-
   const retry = useCallback(() => {
-    setSyncError(false);
     setSyncedUserId(null);
+    setErrorUserId(null);
   }, []);
 
   const isReady = useMemo(() => {

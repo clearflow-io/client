@@ -1,12 +1,13 @@
 import { SignedIn, SignedOut } from '@clerk/clerk-react';
 import { Link } from '@tanstack/react-router';
 import { Home, LayoutDashboard, Menu, User, X } from 'lucide-react';
-import { useState } from 'react';
+import { useId, useState } from 'react';
 import ClerkHeader from '../integrations/clerk/header-user.tsx';
 import { Button } from './ui/button';
 
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
+  const mobileNavId = useId();
 
   return (
     <>
@@ -18,6 +19,8 @@ export default function Header() {
               onClick={() => setIsOpen(true)}
               className="inline-flex h-10 w-10 items-center justify-center rounded-lg text-foreground/70 transition-colors hover:bg-accent hover:text-foreground md:hidden"
               aria-label="Open menu"
+              aria-expanded={isOpen}
+              aria-controls={mobileNavId}
             >
               <Menu size={20} />
             </button>
@@ -98,6 +101,7 @@ export default function Header() {
 
       {/* Mobile Sidebar */}
       <aside
+        id={mobileNavId}
         className={`fixed top-0 left-0 z-50 flex h-full w-80 flex-col border-r border-border bg-card shadow-xl transition-transform duration-300 ease-in-out md:hidden ${
           isOpen ? 'translate-x-0' : '-translate-x-full'
         }`}

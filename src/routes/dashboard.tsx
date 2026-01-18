@@ -12,6 +12,7 @@ import {
   TrendingUp,
   Users,
 } from 'lucide-react';
+import { useId } from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -34,6 +35,8 @@ export const Route = createFileRoute('/dashboard')({
 });
 
 function DashboardPage() {
+  const termsCheckboxId = useId();
+
   return (
     <div className="min-h-screen">
       <SignedIn>
@@ -47,8 +50,8 @@ function DashboardPage() {
               </p>
             </div>
             <div className="flex items-center gap-3">
-              <Button variant="outline" size="icon">
-                <Bell className="h-4 w-4" />
+              <Button variant="outline" size="icon" aria-label="Open notifications">
+                <Bell className="h-4 w-4" aria-hidden="true" />
               </Button>
               <Button>
                 <Plus className="mr-2 h-4 w-4" />
@@ -115,8 +118,15 @@ function DashboardPage() {
                   <div className="flex items-center justify-between">
                     <CardTitle>Recent Tasks</CardTitle>
                     <div className="relative w-64">
-                      <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                      <Input placeholder="Search tasks..." className="pl-9" />
+                      <Search
+                        className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground"
+                        aria-hidden="true"
+                      />
+                      <Input
+                        placeholder="Search tasks..."
+                        className="pl-9"
+                        aria-label="Search tasks"
+                      />
                     </div>
                   </div>
                 </CardHeader>
@@ -226,10 +236,20 @@ function DashboardPage() {
                   <CardDescription>Your active collaborators</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <TeamMember name="Sarah Johnson" role="Designer" status="online" initials="SJ" />
-                  <TeamMember name="Mike Chen" role="Developer" status="online" initials="MC" />
-                  <TeamMember name="Emily Davis" role="PM" status="away" initials="ED" />
-                  <TeamMember name="Alex Smith" role="Developer" status="offline" initials="AS" />
+                  <TeamMember
+                    name="Sarah Johnson"
+                    jobTitle="Designer"
+                    status="online"
+                    initials="SJ"
+                  />
+                  <TeamMember name="Mike Chen" jobTitle="Developer" status="online" initials="MC" />
+                  <TeamMember name="Emily Davis" jobTitle="PM" status="away" initials="ED" />
+                  <TeamMember
+                    name="Alex Smith"
+                    jobTitle="Developer"
+                    status="offline"
+                    initials="AS"
+                  />
                 </CardContent>
               </Card>
 
@@ -318,8 +338,8 @@ function DashboardPage() {
                       </SelectContent>
                     </Select>
                     <div className="flex items-center gap-2">
-                      <Checkbox id="terms" />
-                      <label htmlFor="terms" className="text-sm">
+                      <Checkbox id={termsCheckboxId} />
+                      <label htmlFor={termsCheckboxId} className="text-sm">
                         Accept terms
                       </label>
                     </div>
@@ -361,7 +381,7 @@ function TaskItem({
     <div
       className={`flex items-center gap-3 rounded-lg border p-3 transition-colors hover:bg-accent/50 ${completed ? 'opacity-60' : ''}`}
     >
-      <Checkbox checked={completed} />
+      <Checkbox checked={completed} aria-label={`Mark ${title} complete`} />
       <div className="flex-1 min-w-0">
         <div className={`font-medium ${completed ? 'line-through' : ''}`}>{title}</div>
         <div className="text-sm text-muted-foreground">{project}</div>
@@ -373,21 +393,14 @@ function TaskItem({
         <Clock className="h-3 w-3" />
         {dueDate}
       </div>
-      <Button variant="ghost" size="icon" className="h-8 w-8">
-        <ArrowUpRight className="h-4 w-4" />
+      <Button variant="ghost" size="icon" className="h-8 w-8" aria-label="Open task">
+        <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
       </Button>
     </div>
   );
 }
 
-function ProjectProgress({
-  name,
-  progress,
-}: {
-  name: string;
-  progress: number;
-  color: string;
-}) {
+function ProjectProgress({ name, progress }: { name: string; progress: number; color: string }) {
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between text-sm">
@@ -401,14 +414,16 @@ function ProjectProgress({
 
 function TeamMember({
   name,
-  role,
+  jobTitle,
   status,
   initials,
+  imageUrl,
 }: {
   name: string;
-  role: string;
+  jobTitle: string;
   status: 'online' | 'away' | 'offline';
   initials: string;
+  imageUrl?: string;
 }) {
   const statusColors = {
     online: 'bg-green-500',
@@ -420,7 +435,7 @@ function TeamMember({
     <div className="flex items-center gap-3">
       <div className="relative">
         <Avatar className="h-9 w-9">
-          <AvatarImage src="" />
+          {imageUrl && <AvatarImage src={imageUrl} />}
           <AvatarFallback className="bg-primary/10 text-primary text-xs">{initials}</AvatarFallback>
         </Avatar>
         <div
@@ -429,7 +444,7 @@ function TeamMember({
       </div>
       <div className="flex-1 min-w-0">
         <div className="text-sm font-medium truncate">{name}</div>
-        <div className="text-xs text-muted-foreground">{role}</div>
+        <div className="text-xs text-muted-foreground">{jobTitle}</div>
       </div>
     </div>
   );
