@@ -3,6 +3,7 @@ import type { QueryClient } from '@tanstack/react-query';
 import { createRootRouteWithContext, HeadContent, Scripts } from '@tanstack/react-router';
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools';
 import Header from '../components/Header';
+import { Toaster } from '../components/ui/sonner';
 import ClerkProvider from '../integrations/clerk/provider';
 import TanStackQueryDevtools from '../integrations/tanstack-query/devtools';
 import appCss from '../styles.css?url';
@@ -62,6 +63,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
           <AuthInitializer>
             <Header />
             {children}
+            <Toaster />
             <TanStackDevtools
               config={{
                 position: 'bottom-right',
