@@ -40,7 +40,11 @@ export async function apiClient<T>(
 
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({}));
-    throw new Error(errorData.message || `API request failed with status ${response.status}`);
+    const message =
+      errorData && typeof errorData === 'object' && 'message' in errorData
+        ? String(errorData.message)
+        : `API request failed with status ${response.status}`;
+    throw new Error(message);
   }
 
   if (response.status === 204) {
