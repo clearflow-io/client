@@ -51,7 +51,7 @@ This document outlines the architectural principles, coding standards, and best 
 ## 🤖 AI Interaction Guidelines
 
 ### 🚫 Environment Respect
-- **Bun Runtime**: Use `bun` as the package manager and runtime. Avoid `npm` or `node` commands.
+- **Bun Runtime**: Use `bun` as the package manager and runtime. Use `bunx` instead of `npx`. Avoid `npm` or `node` commands.
 - **Port Management**: The default development port is `3000`. Do not kill processes on this port.
 - **Process Cleanup**: When running build checks, ensure no background Vite processes are left hanging.
 
