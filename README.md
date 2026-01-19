@@ -144,10 +144,10 @@ Details about your education...
 
 ```bash
 # Start development server
-npm run dev
+bun run dev
 
 # Build for production
-npm run build
+bun run build
 ```
 
 
