@@ -31,8 +31,42 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
     ],
     links: [
       {
+        rel: 'preconnect',
+        href: 'https://fonts.googleapis.com',
+      },
+      {
+        rel: 'preconnect',
+        href: 'https://fonts.gstatic.com',
+        crossOrigin: 'anonymous',
+      },
+      {
+        rel: 'stylesheet',
+        href: 'https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap',
+      },
+      {
         rel: 'stylesheet',
         href: appCss,
+      },
+      {
+        rel: 'apple-touch-icon',
+        sizes: '180x180',
+        href: '/apple-touch-icon.png',
+      },
+      {
+        rel: 'icon',
+        type: 'image/png',
+        sizes: '32x32',
+        href: '/favicon-32x32.png',
+      },
+      {
+        rel: 'icon',
+        type: 'image/png',
+        sizes: '16x16',
+        href: '/favicon-16x16.png',
+      },
+      {
+        rel: 'manifest',
+        href: '/site.webmanifest',
       },
     ],
   }),
@@ -41,9 +75,9 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 });
 
 function AuthInitializer({ children }: { children: React.ReactNode }) {
-  const { isLoaded, hasError, retry, isSyncing } = useInitializeUser();
+  const { isReady, syncError, retry, isSyncing } = useInitializeUser();
 
-  if (!isLoaded) {
+  if (!isReady) {
     return (
       <div className="flex h-screen w-screen items-center justify-center">
         <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
@@ -51,7 +85,7 @@ function AuthInitializer({ children }: { children: React.ReactNode }) {
     );
   }
 
-  if (hasError) {
+  if (syncError) {
     return (
       <div className="flex h-screen w-screen items-center justify-center">
         <div className="flex max-w-md flex-col items-center gap-4 rounded-lg border border-destructive/50 bg-destructive/10 p-6 text-center">

@@ -5,17 +5,17 @@ import { apiClient } from '@/lib/api-client';
 export interface User {
   id: string;
   email: string;
-  first_name?: string;
-  last_name?: string;
-  image_url?: string;
+  firstName?: string;
+  lastName?: string;
+  imageUrl?: string;
 }
 
 export interface SyncUserPayload {
-  clerk_id: string;
+  clerkId: string;
   email: string;
-  first_name?: string | null;
-  last_name?: string | null;
-  image_url?: string | null;
+  firstName?: string | null;
+  lastName?: string | null;
+  imageUrl?: string | null;
 }
 
 export const userKeys = {
