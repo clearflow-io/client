@@ -102,6 +102,7 @@ export default function Header() {
       {/* Mobile Sidebar */}
       <aside
         id={mobileNavId}
+        aria-hidden={!isOpen}
         className={`fixed top-0 left-0 z-50 flex h-full w-80 flex-col border-r border-border bg-card shadow-xl transition-transform duration-300 ease-in-out md:hidden ${
           isOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
