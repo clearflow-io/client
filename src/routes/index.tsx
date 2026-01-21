@@ -10,9 +10,9 @@ function Home() {
           ClearFlow
         </h1>
         <p className="text-xl md:text-2xl text-gray-600 dark:text-gray-400 leading-relaxed">
-          ClearFlow is an intelligent expenses tracker designed to help users gain deep insights
-          into their spending habits by automatically processing credit card bills and bank
-          statements.
+          ClearFlow is an intelligent expenses tracker designed to help users
+          gain deep insights into their spending habits by automatically
+          processing credit card bills and bank statements.
         </p>
       </div>
     </div>

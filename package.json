@@ -3,15 +3,15 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vite dev --port 3000",
-    "build": "vite build",
-    "preview": "vite preview",
+    "dev": "bunx vite dev --port 3000",
+    "build": "bunx vite build",
+    "preview": "bunx vite preview",
     "start": "bun run server.ts",
-    "typecheck": "tsc --noEmit",
-    "test": "vitest run",
-    "format": "biome format",
-    "lint": "biome lint",
-    "check": "biome check"
+    "typecheck": "bunx tsc --noEmit",
+    "test": "bunx vitest run",
+    "format": "bunx biome format --write .",
+    "lint": "bunx biome lint",
+    "check": "bunx biome check"
   },
   "dependencies": {
     "@base-ui/react": "^1.1.0",

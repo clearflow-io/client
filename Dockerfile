@@ -1,5 +1,5 @@
 # Build stage
-FROM oven/bun:latest AS builder
+FROM oven/bun:1.3.6 AS builder
 
 WORKDIR /app
 
@@ -12,11 +12,17 @@ RUN bun install --frozen-lockfile
 # Copy source files
 COPY . .
 
+# Build-time environment variables for Vite
+ARG VITE_CLERK_PUBLISHABLE_KEY
+ARG VITE_API_URL
+ENV VITE_CLERK_PUBLISHABLE_KEY=$VITE_CLERK_PUBLISHABLE_KEY
+ENV VITE_API_URL=$VITE_API_URL
+
 # Build the application
 RUN bun run build
 
 # Production stage
-FROM oven/bun:latest
+FROM oven/bun:1.3.6
 
 WORKDIR /app
 

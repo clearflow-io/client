@@ -20,14 +20,21 @@ export function useInitializeUser() {
   // Sync user with backend when signed in
   useEffect(() => {
     const shouldSync =
-      isLoaded && isSignedIn && user && user.id !== syncedUserId && !isSyncing && !syncError;
+      isLoaded &&
+      isSignedIn &&
+      user &&
+      user.id !== syncedUserId &&
+      !isSyncing &&
+      !syncError;
 
     if (!shouldSync) return;
 
     const email = user.primaryEmailAddress?.emailAddress;
     if (!email) {
       console.error('User has no primary email address');
-      toast.error('Account error: No email address found. Please sign in with a valid email.');
+      toast.error(
+        'Account error: No email address found. Please sign in with a valid email.',
+      );
       signOut();
       return;
     }
@@ -49,7 +56,16 @@ export function useInitializeUser() {
         },
       },
     );
-  }, [isLoaded, isSignedIn, user, syncedUserId, syncUser, isSyncing, syncError, signOut]);
+  }, [
+    isLoaded,
+    isSignedIn,
+    user,
+    syncedUserId,
+    syncUser,
+    isSyncing,
+    syncError,
+    signOut,
+  ]);
 
   const retry = useCallback(() => {
     setSyncedUserId(null);

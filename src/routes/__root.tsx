@@ -1,6 +1,10 @@
 import { TanStackDevtools } from '@tanstack/react-devtools';
 import type { QueryClient } from '@tanstack/react-query';
-import { createRootRouteWithContext, HeadContent, Scripts } from '@tanstack/react-router';
+import {
+  createRootRouteWithContext,
+  HeadContent,
+  Scripts,
+} from '@tanstack/react-router';
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools';
 import { AlertCircle, RefreshCw } from 'lucide-react';
 import Header from '../components/Header';
@@ -91,14 +95,18 @@ function AuthInitializer({ children }: { children: React.ReactNode }) {
         <div className="flex max-w-md flex-col items-center gap-4 rounded-lg border border-destructive/50 bg-destructive/10 p-6 text-center">
           <AlertCircle className="h-12 w-12 text-destructive" />
           <div className="space-y-2">
-            <h2 className="text-lg font-semibold text-foreground">Failed to Initialize Account</h2>
+            <h2 className="text-lg font-semibold text-foreground">
+              Failed to Initialize Account
+            </h2>
             <p className="text-sm text-muted-foreground">
-              We couldn't connect to our servers to set up your account. Please check your
-              connection and try again.
+              We couldn't connect to our servers to set up your account. Please
+              check your connection and try again.
             </p>
           </div>
           <Button onClick={retry} disabled={isSyncing} className="gap-2">
-            <RefreshCw className={`h-4 w-4 ${isSyncing ? 'animate-spin' : ''}`} />
+            <RefreshCw
+              className={`h-4 w-4 ${isSyncing ? 'animate-spin' : ''}`}
+            />
             {isSyncing ? 'Retrying...' : 'Try Again'}
           </Button>
         </div>

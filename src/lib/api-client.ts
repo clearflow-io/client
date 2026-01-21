@@ -32,9 +32,13 @@ export async function apiClient<T>(
     config.body = JSON.stringify(body);
   }
 
-  const baseUrl = env.VITE_API_URL.endsWith('/') ? env.VITE_API_URL.slice(0, -1) : env.VITE_API_URL;
+  const baseUrl = env.VITE_API_URL.endsWith('/')
+    ? env.VITE_API_URL.slice(0, -1)
+    : env.VITE_API_URL;
 
-  const fullUrl = endpoint.startsWith('/') ? `${baseUrl}${endpoint}` : `${baseUrl}/${endpoint}`;
+  const fullUrl = endpoint.startsWith('/')
+    ? `${baseUrl}${endpoint}`
+    : `${baseUrl}/${endpoint}`;
 
   const response = await fetch(fullUrl, config);
 

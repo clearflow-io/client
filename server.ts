@@ -99,23 +99,25 @@ const INCLUDE_PATTERNS = (process.env.ASSET_PRELOAD_INCLUDE_PATTERNS ?? '')
   .split(',')
   .map((s) => s.trim())
   .filter(Boolean)
-  .map((pattern: string) => convertGlobToRegExp(pattern));
+  .map((pattern: string) => new Bun.Glob(pattern));
 
 // Parse comma-separated exclude patterns (no defaults)
 const EXCLUDE_PATTERNS = (process.env.ASSET_PRELOAD_EXCLUDE_PATTERNS ?? '')
   .split(',')
   .map((s) => s.trim())
   .filter(Boolean)
-  .map((pattern: string) => convertGlobToRegExp(pattern));
+  .map((pattern: string) => new Bun.Glob(pattern));
 
 // Verbose logging flag
 const VERBOSE = process.env.ASSET_PRELOAD_VERBOSE_LOGGING === 'true';
 
 // Optional ETag feature
-const ENABLE_ETAG = (process.env.ASSET_PRELOAD_ENABLE_ETAG ?? 'true') === 'true';
+const ENABLE_ETAG =
+  (process.env.ASSET_PRELOAD_ENABLE_ETAG ?? 'true') === 'true';
 
 // Optional Gzip feature
-const ENABLE_GZIP = (process.env.ASSET_PRELOAD_ENABLE_GZIP ?? 'true') === 'true';
+const ENABLE_GZIP =
+  (process.env.ASSET_PRELOAD_ENABLE_GZIP ?? 'true') === 'true';
 const GZIP_MIN_BYTES = Number(process.env.ASSET_PRELOAD_GZIP_MIN_SIZE ?? 1024); // 1KB
 const GZIP_TYPES = (
   process.env.ASSET_PRELOAD_GZIP_MIME_TYPES ??
@@ -126,15 +128,10 @@ const GZIP_TYPES = (
   .filter(Boolean);
 
 /**
- * Convert a simple glob pattern to a regular expression
- * Supports * wildcard for matching any characters
+ * Checks if a file name matches a glob pattern safely using Bun.Glob
  */
-function convertGlobToRegExp(globPattern: string): RegExp {
-  // Escape regex special chars except *, then replace * with .*
-  const escapedPattern = globPattern
-    .replace(/[-/\\^$+?.()|[\]{}]/g, '\\$&')
-    .replace(/\*/g, '.*');
-  return new RegExp(`^${escapedPattern}$`, 'i');
+function isGlobMatch(pattern: Bun.Glob, fileName: string): boolean {
+  return pattern.match(fileName);
 }
 
 /**
@@ -183,13 +180,13 @@ function isFileEligibleForPreloading(relativePath: string): boolean {
 
   // If include patterns are specified, file must match at least one
   if (INCLUDE_PATTERNS.length > 0) {
-    if (!INCLUDE_PATTERNS.some((pattern) => pattern.test(fileName))) {
+    if (!INCLUDE_PATTERNS.some((pattern) => isGlobMatch(pattern, fileName))) {
       return false;
     }
   }
 
   // If exclude patterns are specified, file must not match any
-  if (EXCLUDE_PATTERNS.some((pattern) => pattern.test(fileName))) {
+  if (EXCLUDE_PATTERNS.some((pattern) => isGlobMatch(pattern, fileName))) {
     return false;
   }
 
@@ -462,7 +459,7 @@ async function initializeStaticRoutes(
                 : 'preloaded';
           const route =
             file.route.length > 30
-              ? file.route.substring(0, 27) + '...'
+              ? `${file.route.substring(0, 27)}...`
               : file.route;
           console.log(
             `${status.padEnd(12)} │ ${route.padEnd(30)} │ ${file.type.padEnd(28)} │ ${reason.padEnd(10)}`,
@@ -530,9 +527,9 @@ async function initializeServer() {
       ...routes,
 
       // Fallback to TanStack Start handler for all other routes
-      '/*': (req: Request) => {
+      '/*': async (req: Request) => {
         try {
-          return handler.fetch(req);
+          return await handler.fetch(req);
         } catch (error) {
           log.error(`Server handler error: ${String(error)}`);
           return new Response('Internal Server Error', { status: 500 });
