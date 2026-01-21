@@ -39,7 +39,7 @@ EXPOSE 8080
 
 # Health check
 HEALTHCHECK --interval=10s --timeout=5s --start-period=5s --retries=3 \
-  CMD wget --no-verbose --tries=1 -O - http://localhost:8080/healthz || exit 1
+  CMD bun -e "await fetch('http://localhost:8080/healthz').then(r => { if (!r.ok) throw r.status })"
 
 # Start the server
 CMD ["bun", "run", "server.ts"]
