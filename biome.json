@@ -34,12 +34,22 @@
   "linter": {
     "enabled": true,
     "rules": {
-      "recommended": true
+      "recommended": true,
+      "style": {
+        "useComponentExportOnlyModules": "off"
+      }
+    },
+    "domains": {
+      "react": "all"
     }
   },
   "javascript": {
     "formatter": {
       "quoteStyle": "single"
-    }
+    },
+    "linter": {
+      "enabled": true
+    },
+    "jsxRuntime": "transparent"
   }
 }
