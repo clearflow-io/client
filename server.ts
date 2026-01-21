@@ -527,6 +527,13 @@ async function initializeServer() {
     port: SERVER_PORT,
 
     routes: {
+      // Healthcheck for Docker/platform
+      '/healthz': () =>
+        new Response(JSON.stringify({ status: 'OK' }), {
+          status: 200,
+          headers: { 'Content-Type': 'application/json' },
+        }),
+
       // Serve static assets (preloaded or on-demand)
       ...routes,
 
