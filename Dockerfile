@@ -26,11 +26,13 @@ FROM oven/bun:1.3.6
 
 WORKDIR /app
 
-# Copy build output
-COPY --from=builder /app/.output ./.output
+# Copy build output and dependencies
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/server.ts ./
-COPY --from=builder /app/package.json ./
+COPY --from=builder /app/package.json /app/bun.lock ./
+
+# Install only production dependencies
+RUN bun install --production
 
 # Expose port
 EXPOSE 8080
