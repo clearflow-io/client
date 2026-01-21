@@ -33,7 +33,7 @@ COPY --from=builder /app/server.ts ./
 COPY --from=builder /app/package.json ./
 
 # Expose port
-EXPOSE 3000
+EXPOSE 8080
 
 # Start the server
 CMD ["bun", "run", "server.ts"]

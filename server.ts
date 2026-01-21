@@ -14,7 +14,7 @@
  *
  * PORT (number)
  *   - Server port number
- *   - Default: 3000
+ *   - Default: 8080
  *
  * ASSET_PRELOAD_MAX_SIZE (number)
  *   - Maximum file size in bytes to preload into memory
@@ -66,7 +66,7 @@
 import path from 'node:path';
 
 // Configuration
-const SERVER_PORT = Number(process.env.PORT ?? 3000);
+const SERVER_PORT = Number(process.env.PORT ?? 8080);
 const CLIENT_DIRECTORY = './dist/client';
 const SERVER_ENTRY_POINT = './dist/server/server.js';
 
@@ -99,14 +99,14 @@ const INCLUDE_PATTERNS = (process.env.ASSET_PRELOAD_INCLUDE_PATTERNS ?? '')
   .split(',')
   .map((s) => s.trim())
   .filter(Boolean)
-  .map((pattern: string) => new Bun.Glob(pattern));
+  .map((pattern: string) => convertGlobToRegExp(pattern));
 
 // Parse comma-separated exclude patterns (no defaults)
 const EXCLUDE_PATTERNS = (process.env.ASSET_PRELOAD_EXCLUDE_PATTERNS ?? '')
   .split(',')
   .map((s) => s.trim())
   .filter(Boolean)
-  .map((pattern: string) => new Bun.Glob(pattern));
+  .map((pattern: string) => convertGlobToRegExp(pattern));
 
 // Verbose logging flag
 const VERBOSE = process.env.ASSET_PRELOAD_VERBOSE_LOGGING === 'true';
@@ -128,10 +128,15 @@ const GZIP_TYPES = (
   .filter(Boolean);
 
 /**
- * Checks if a file name matches a glob pattern safely using Bun.Glob
+ * Convert a simple glob pattern to a regular expression
+ * Supports * wildcard for matching any characters
  */
-function isGlobMatch(pattern: Bun.Glob, fileName: string): boolean {
-  return pattern.match(fileName);
+function convertGlobToRegExp(globPattern: string): RegExp {
+  // Escape regex special chars except *, then replace * with .*
+  const escapedPattern = globPattern
+    .replace(/[-/\\^$+?.()|[\]{}]/g, '\\$&')
+    .replace(/\*/g, '.*');
+  return new RegExp(`^${escapedPattern}$`, 'i');
 }
 
 /**
@@ -180,13 +185,13 @@ function isFileEligibleForPreloading(relativePath: string): boolean {
 
   // If include patterns are specified, file must match at least one
   if (INCLUDE_PATTERNS.length > 0) {
-    if (!INCLUDE_PATTERNS.some((pattern) => isGlobMatch(pattern, fileName))) {
+    if (!INCLUDE_PATTERNS.some((pattern) => pattern.test(fileName))) {
       return false;
     }
   }
 
   // If exclude patterns are specified, file must not match any
-  if (EXCLUDE_PATTERNS.some((pattern) => isGlobMatch(pattern, fileName))) {
+  if (EXCLUDE_PATTERNS.some((pattern) => pattern.test(fileName))) {
     return false;
   }
 
@@ -270,9 +275,8 @@ function createCompositeGlobPattern(): Bun.Glob {
     .map((s) => s.trim())
     .filter(Boolean);
 
-  const [first] = raw;
-
   if (raw.length === 0) return new Bun.Glob('**/*');
+  const [first] = raw;
   if (raw.length === 1 && first) return new Bun.Glob(first);
   return new Bun.Glob(`{${raw.join(',')}}`);
 }
@@ -459,7 +463,7 @@ async function initializeStaticRoutes(
                 : 'preloaded';
           const route =
             file.route.length > 30
-              ? `${file.route.substring(0, 27)}...`
+              ? file.route.substring(0, 27) + '...'
               : file.route;
           console.log(
             `${status.padEnd(12)} │ ${route.padEnd(30)} │ ${file.type.padEnd(28)} │ ${reason.padEnd(10)}`,
@@ -527,9 +531,9 @@ async function initializeServer() {
       ...routes,
 
       // Fallback to TanStack Start handler for all other routes
-      '/*': async (req: Request) => {
+      '/*': (req: Request) => {
         try {
-          return await handler.fetch(req);
+          return handler.fetch(req);
         } catch (error) {
           log.error(`Server handler error: ${String(error)}`);
           return new Response('Internal Server Error', { status: 500 });
