@@ -26,7 +26,6 @@ const config = defineConfig({
         plugins: ['babel-plugin-react-compiler'],
       },
     }),
-    nitro({ preset: 'bun' }),
   ],
 });
 
