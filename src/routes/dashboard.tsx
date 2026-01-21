@@ -16,7 +16,13 @@ import { useId } from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Progress } from '@/components/ui/progress';
@@ -50,7 +56,11 @@ function DashboardPage() {
               </p>
             </div>
             <div className="flex items-center gap-3">
-              <Button variant="outline" size="icon" aria-label="Open notifications">
+              <Button
+                variant="outline"
+                size="icon"
+                aria-label="Open notifications"
+              >
                 <Bell className="h-4 w-4" aria-hidden="true" />
               </Button>
               <Button>
@@ -64,7 +74,9 @@ function DashboardPage() {
           <div className="mb-8 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
             <Card>
               <CardHeader className="flex flex-row items-center justify-between pb-2">
-                <CardTitle className="text-sm font-medium">Total Projects</CardTitle>
+                <CardTitle className="text-sm font-medium">
+                  Total Projects
+                </CardTitle>
                 <TrendingUp className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
@@ -76,7 +88,9 @@ function DashboardPage() {
             </Card>
             <Card>
               <CardHeader className="flex flex-row items-center justify-between pb-2">
-                <CardTitle className="text-sm font-medium">Active Tasks</CardTitle>
+                <CardTitle className="text-sm font-medium">
+                  Active Tasks
+                </CardTitle>
                 <CheckCircle2 className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
@@ -88,17 +102,23 @@ function DashboardPage() {
             </Card>
             <Card>
               <CardHeader className="flex flex-row items-center justify-between pb-2">
-                <CardTitle className="text-sm font-medium">Team Members</CardTitle>
+                <CardTitle className="text-sm font-medium">
+                  Team Members
+                </CardTitle>
                 <Users className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">12</div>
-                <p className="text-xs text-muted-foreground">2 pending invites</p>
+                <p className="text-xs text-muted-foreground">
+                  2 pending invites
+                </p>
               </CardContent>
             </Card>
             <Card>
               <CardHeader className="flex flex-row items-center justify-between pb-2">
-                <CardTitle className="text-sm font-medium">Hours Logged</CardTitle>
+                <CardTitle className="text-sm font-medium">
+                  Hours Logged
+                </CardTitle>
                 <Clock className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
@@ -198,10 +218,26 @@ function DashboardPage() {
                   <CardDescription>Track your ongoing projects</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
-                  <ProjectProgress name="Website Redesign" progress={75} color="primary" />
-                  <ProjectProgress name="Mobile App Development" progress={45} color="primary" />
-                  <ProjectProgress name="Marketing Campaign" progress={90} color="primary" />
-                  <ProjectProgress name="Database Migration" progress={30} color="primary" />
+                  <ProjectProgress
+                    name="Website Redesign"
+                    progress={75}
+                    color="primary"
+                  />
+                  <ProjectProgress
+                    name="Mobile App Development"
+                    progress={45}
+                    color="primary"
+                  />
+                  <ProjectProgress
+                    name="Marketing Campaign"
+                    progress={90}
+                    color="primary"
+                  />
+                  <ProjectProgress
+                    name="Database Migration"
+                    progress={30}
+                    color="primary"
+                  />
                 </CardContent>
               </Card>
             </div>
@@ -242,8 +278,18 @@ function DashboardPage() {
                     status="online"
                     initials="SJ"
                   />
-                  <TeamMember name="Mike Chen" jobTitle="Developer" status="online" initials="MC" />
-                  <TeamMember name="Emily Davis" jobTitle="PM" status="away" initials="ED" />
+                  <TeamMember
+                    name="Mike Chen"
+                    jobTitle="Developer"
+                    status="online"
+                    initials="MC"
+                  />
+                  <TeamMember
+                    name="Emily Davis"
+                    jobTitle="PM"
+                    status="away"
+                    initials="ED"
+                  />
                   <TeamMember
                     name="Alex Smith"
                     jobTitle="Developer"
@@ -261,15 +307,23 @@ function DashboardPage() {
                 <CardContent className="space-y-4">
                   <div className="flex items-center justify-between">
                     <div className="space-y-0.5">
-                      <div className="text-sm font-medium">Email Notifications</div>
-                      <div className="text-xs text-muted-foreground">Receive email updates</div>
+                      <div className="text-sm font-medium">
+                        Email Notifications
+                      </div>
+                      <div className="text-xs text-muted-foreground">
+                        Receive email updates
+                      </div>
                     </div>
                     <Switch defaultChecked />
                   </div>
                   <div className="flex items-center justify-between">
                     <div className="space-y-0.5">
-                      <div className="text-sm font-medium">Push Notifications</div>
-                      <div className="text-xs text-muted-foreground">Browser notifications</div>
+                      <div className="text-sm font-medium">
+                        Push Notifications
+                      </div>
+                      <div className="text-xs text-muted-foreground">
+                        Browser notifications
+                      </div>
                     </div>
                     <Switch />
                   </div>
@@ -295,13 +349,17 @@ function DashboardPage() {
           <Card className="mt-6">
             <CardHeader>
               <CardTitle>Component Showcase</CardTitle>
-              <CardDescription>Preview of UI components with your brand colors</CardDescription>
+              <CardDescription>
+                Preview of UI components with your brand colors
+              </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-6">
                 {/* Buttons */}
                 <div>
-                  <h3 className="mb-3 text-sm font-medium text-muted-foreground">Buttons</h3>
+                  <h3 className="mb-3 text-sm font-medium text-muted-foreground">
+                    Buttons
+                  </h3>
                   <div className="flex flex-wrap gap-3">
                     <Button>Primary</Button>
                     <Button variant="secondary">Secondary</Button>
@@ -314,7 +372,9 @@ function DashboardPage() {
 
                 {/* Badges */}
                 <div>
-                  <h3 className="mb-3 text-sm font-medium text-muted-foreground">Badges</h3>
+                  <h3 className="mb-3 text-sm font-medium text-muted-foreground">
+                    Badges
+                  </h3>
                   <div className="flex flex-wrap gap-3">
                     <Badge>Default</Badge>
                     <Badge variant="secondary">Secondary</Badge>
@@ -325,7 +385,9 @@ function DashboardPage() {
 
                 {/* Inputs */}
                 <div>
-                  <h3 className="mb-3 text-sm font-medium text-muted-foreground">Inputs</h3>
+                  <h3 className="mb-3 text-sm font-medium text-muted-foreground">
+                    Inputs
+                  </h3>
                   <div className="flex flex-wrap items-center gap-3">
                     <Input placeholder="Text input..." className="max-w-xs" />
                     <Select>
@@ -383,7 +445,9 @@ function TaskItem({
     >
       <Checkbox checked={completed} aria-label={`Mark ${title} complete`} />
       <div className="flex-1 min-w-0">
-        <div className={`font-medium ${completed ? 'line-through' : ''}`}>{title}</div>
+        <div className={`font-medium ${completed ? 'line-through' : ''}`}>
+          {title}
+        </div>
         <div className="text-sm text-muted-foreground">{project}</div>
       </div>
       <Badge variant="outline" className={priorityColors[priority]}>
@@ -393,14 +457,26 @@ function TaskItem({
         <Clock className="h-3 w-3" />
         {dueDate}
       </div>
-      <Button variant="ghost" size="icon" className="h-8 w-8" aria-label="Open task">
+      <Button
+        variant="ghost"
+        size="icon"
+        className="h-8 w-8"
+        aria-label="Open task"
+      >
         <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
       </Button>
     </div>
   );
 }
 
-function ProjectProgress({ name, progress }: { name: string; progress: number; color: string }) {
+function ProjectProgress({
+  name,
+  progress,
+}: {
+  name: string;
+  progress: number;
+  color: string;
+}) {
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between text-sm">
@@ -436,7 +512,9 @@ function TeamMember({
       <div className="relative">
         <Avatar className="h-9 w-9">
           {imageUrl && <AvatarImage src={imageUrl} />}
-          <AvatarFallback className="bg-primary/10 text-primary text-xs">{initials}</AvatarFallback>
+          <AvatarFallback className="bg-primary/10 text-primary text-xs">
+            {initials}
+          </AvatarFallback>
         </Avatar>
         <div
           className={`absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full border-2 border-card ${statusColors[status]}`}

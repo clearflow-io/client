@@ -1,5 +1,5 @@
 {
-  "$schema": "https://biomejs.dev/schemas/2.2.4/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.3.11/schema.json",
   "vcs": {
     "enabled": false,
     "clientKind": "git",
@@ -12,15 +12,17 @@
       "**/.vscode/**/*",
       "**/index.html",
       "**/vite.config.ts",
+      "server.ts",
       "!**/src/routeTree.gen.ts",
-      "!**/src/styles.css"
+      "!**/src/styles.css",
+      "!**/src/components/ui/*"
     ]
   },
   "formatter": {
     "enabled": true,
     "indentStyle": "space",
     "indentWidth": 2,
-    "lineWidth": 100
+    "lineWidth": 80
   },
   "assist": {
     "actions": {
@@ -32,12 +34,22 @@
   "linter": {
     "enabled": true,
     "rules": {
-      "recommended": true
+      "recommended": true,
+      "style": {
+        "useComponentExportOnlyModules": "off"
+      }
+    },
+    "domains": {
+      "react": "all"
     }
   },
   "javascript": {
     "formatter": {
       "quoteStyle": "single"
-    }
+    },
+    "linter": {
+      "enabled": true
+    },
+    "jsxRuntime": "transparent"
   }
 }
